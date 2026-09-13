@@ -1,6 +1,6 @@
 import React from 'react';
 import { CheckCircle, XCircle, Info, X } from 'lucide-react';
-import { useToastStore } from '../../stores';
+import { useToastStore } from '../lib/store';
 
 export const ToastContainer: React.FC = () => {
   const { toasts, removeToast } = useToastStore();
