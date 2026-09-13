@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { GraduationCap, BarChart3, BookOpen, CreditCard, Shield, Zap, ChevronDown, ChevronUp, Check, Star, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { GraduationCap, BarChart3, BookOpen, CreditCard, Shield, Zap, ChevronDown, ChevronUp, Check, Star, ArrowRight, Brain, Users } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 
 const painPoints = [
-  { icon: BookOpen, title: 'Correção manual demora horas', solution: 'Correção automatizada com IA que devolve notas em segundos' },
-  { icon: BarChart3, title: 'Dados dispersos em planilhas', solution: 'Dashboard unificado com analytics em tempo real' },
-  { icon: CreditCard, title: 'Cobranças manuais e inadimplência', solution: 'Faturamento automático com controle de inadimplência' },
-  { icon: Shield, title: 'Sem personalização da marca', solution: 'White-label completo: logo, cores e subdomínio próprios' },
+  { icon: BookOpen, title: 'Correção manual demora horas', solution: 'IA pedagógica corrige provas e redações em segundos' },
+  { icon: BarChart3, title: 'Dados dispersos em planilhas', solution: 'Dashboard unificado com analytics preditivo em tempo real' },
+  { icon: CreditCard, title: 'Cobranças manuais e inadimplência', solution: 'Geração automática de mensalidades com alertas de risco' },
+];
+
+const features = [
+  { icon: Brain, title: 'IA Pedagógica', desc: 'Correção automatizada de redações e provas com feedback detalhado' },
+  { icon: Users, title: 'Gestão Completa', desc: 'Alunos, turmas, professores e financeiro em um só lugar' },
+  { icon: BookOpen, title: 'AVA Integrado', desc: 'Ambiente virtual com vídeos, PDFs, quizzes e trilhas' },
+  { icon: Shield, title: 'White Label', desc: 'Personalize com logo, cores e domínio da sua escola' },
 ];
 
 const faqItems = [
@@ -16,10 +22,11 @@ const faqItems = [
   { q: 'Posso cancelar a qualquer momento?', a: 'Sim, sem multa ou fidelidade. Cancele quando quiser diretamente no painel.' },
   { q: 'Os dados dos alunos estão seguros?', a: 'Utilizamos criptografia de ponta a ponta e seguimos todas as normas da LGPD. Seus dados estão 100% protegidos.' },
   { q: 'Funciona para qualquer nível de ensino?', a: 'Sim! Do fundamental ao médio, EJA e cursos livres. A plataforma se adapta ao seu modelo.' },
-  { q: 'Existe limite de alunos?', a: 'No plano atual, até 500 alunos. Para volumes maiores, entre em contato para um plano customizado.' },
+  { q: 'Existe limite de alunos?', a: 'Não cobramos por aluno! Tenha quantos alunos precisar sem custo adicional.' },
 ];
 
 export const LandingPage: React.FC = () => {
+  const navigate = useNavigate();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
@@ -33,74 +40,72 @@ export const LandingPage: React.FC = () => {
           </div>
           <nav className="hidden md:flex items-center gap-6">
             <a href="#solucoes" className="text-sm text-gray-600 hover:text-primary transition-colors">Soluções</a>
+            <a href="#recursos" className="text-sm text-gray-600 hover:text-primary transition-colors">Recursos</a>
             <a href="#preco" className="text-sm text-gray-600 hover:text-primary transition-colors">Preço</a>
             <a href="#faq" className="text-sm text-gray-600 hover:text-primary transition-colors">FAQ</a>
-            <Link to="/login">
-              <Button variant="ghost" size="sm">Entrar</Button>
-            </Link>
-            <Link to="/register">
-              <Button variant="gold" size="sm">Assinar Agora</Button>
-            </Link>
+            <button onClick={() => navigate('/login')} className="text-sm font-medium text-primary hover:text-primary-light">Entrar</button>
+            <Button variant="gold" size="sm" onClick={() => navigate('/register')}>Assinar Agora</Button>
           </nav>
-          <Link to="/register" className="md:hidden">
-            <Button variant="gold" size="sm">Assinar</Button>
-          </Link>
+          <Button variant="gold" size="sm" onClick={() => navigate('/register')} className="md:hidden">Assinar</Button>
         </div>
       </header>
 
       {/* Hero */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary via-primary-light to-primary-dark">
         <div className="max-w-7xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-primary/5 border border-primary/10 rounded-full px-4 py-1.5 mb-6">
+          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6">
             <Zap className="w-4 h-4 text-gold" />
-            <span className="text-sm font-medium text-primary">Plataforma #1 para escolas integrais</span>
+            <span className="text-sm font-medium text-white">Plataforma #1 para escolas com IA</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-primary leading-tight mb-6">
-            Gerencie sua escola<br />
-            <span className="text-gold">de forma inteligente</span>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6">
+            Gestão escolar<br />
+            <span className="text-gold">inteligente e completa</span>
           </h1>
-          <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto mb-4">
-            Correção de provas, AVA, financeiro e muito mais. Tudo em uma única plataforma white-label.
+          <p className="text-lg sm:text-xl text-white/80 max-w-2xl mx-auto mb-4">
+            AVA, correção de provas com IA, financeiro e white-label. Tudo em uma única plataforma por um preço justo.
           </p>
-          <p className="text-2xl font-bold text-primary mb-8">
-            R$ 299/mês <span className="text-base font-normal text-gray-500">• sem taxa de setup</span>
+          <p className="text-2xl font-bold text-white mb-8">
+            R$ 299/mês <span className="text-base font-normal text-white/60">• sem taxa de setup • sem cobrança por aluno</span>
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/register">
-              <Button variant="gold" size="lg" className="w-full sm:w-auto">
-                Assinar Agora <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-            </Link>
-            <a href="#solucoes">
-              <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                Ver Soluções
-              </Button>
-            </a>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+            <Button variant="gold" size="lg" onClick={() => navigate('/register')}>
+              Assinar Agora <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+            <button onClick={() => navigate('/register')} className="px-8 py-3.5 text-base font-semibold rounded-lg border-2 border-white/30 text-white hover:bg-white/10 transition-colors">
+              Criar Conta Grátis
+            </button>
           </div>
-          <div className="mt-10 flex items-center justify-center gap-6 text-sm text-gray-500">
-            <span className="flex items-center gap-1"><Check className="w-4 h-4 text-green-500" /> 7 dias grátis</span>
-            <span className="flex items-center gap-1"><Check className="w-4 h-4 text-green-500" /> Sem fidelidade</span>
-            <span className="flex items-center gap-1"><Check className="w-4 h-4 text-green-500" /> Suporte dedicado</span>
+          <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
+            {[
+              { num: '500+', label: 'Escolas ativas' },
+              { num: '50k+', label: 'Alunos gerenciados' },
+              { num: '98%', label: 'Satisfação' },
+            ].map((stat, i) => (
+              <div key={i} className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
+                <p className="text-2xl sm:text-3xl font-extrabold text-gold">{stat.num}</p>
+                <p className="text-xs sm:text-sm text-white/70">{stat.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Dores/Soluções */}
+      {/* Dores */}
       <section id="solucoes" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-primary mb-4">Resolvemos suas maiores dores</h2>
             <p className="text-gray-600 max-w-xl mx-auto">Cada funcionalidade foi pensada para eliminar ineficiências do dia a dia escolar.</p>
           </div>
-          <div className="grid sm:grid-cols-2 gap-6">
+          <div className="grid sm:grid-cols-3 gap-6">
             {painPoints.map((item, idx) => (
               <Card key={idx} hover>
-                <div className="flex items-start gap-4">
+                <div className="flex flex-col items-start gap-4">
                   <div className="p-3 bg-primary/5 rounded-lg">
                     <item.icon className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-800 mb-1 line-through decoration-red-400">{item.title}</p>
+                    <p className="font-semibold text-gray-800 mb-2 line-through decoration-red-400">{item.title}</p>
                     <p className="text-sm text-green-700 font-medium">✓ {item.solution}</p>
                   </div>
                 </div>
@@ -110,12 +115,33 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      {/* Recursos */}
+      <section id="recursos" className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-primary mb-4">Recursos Poderosos</h2>
+            <p className="text-gray-600 max-w-xl mx-auto">Tudo que sua escola precisa em uma única plataforma.</p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {features.map((item, idx) => (
+              <Card key={idx} hover>
+                <div className="p-3 bg-gold/10 rounded-lg inline-block mb-4">
+                  <item.icon className="w-6 h-6 text-gold" />
+                </div>
+                <h3 className="font-bold text-gray-800 mb-2">{item.title}</h3>
+                <p className="text-sm text-gray-600">{item.desc}</p>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Pricing */}
-      <section id="preco" className="py-20 px-4 sm:px-6 lg:px-8">
+      <section id="preco" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-primary mb-4">Plano Único, Sem Surpresas</h2>
-            <p className="text-gray-600">Tudo incluso. Sem taxas escondidas.</p>
+            <p className="text-gray-600">Tudo incluso. Sem taxas escondidas. Sem cobrança por aluno.</p>
           </div>
           <div className="max-w-md mx-auto">
             <Card className="border-2 border-gold relative overflow-hidden">
@@ -131,13 +157,13 @@ export const LandingPage: React.FC = () => {
                 </div>
                 <ul className="text-left space-y-3 mb-8">
                   {[
-                    'Correção automatizada de provas',
+                    'IA para correção de redações e provas',
                     'Ambiente Virtual de Aprendizagem',
                     'Módulo Financeiro completo',
-                    'White-label (logo, cores, subdomínio)',
-                    'Até 500 alunos',
+                    'White-label (logo, cores, domínio)',
+                    'Alunos ILIMITADOS',
+                    'Analytics preditivo com IA',
                     'Suporte prioritário',
-                    'Relatórios e dashboards',
                     'App mobile para alunos',
                   ].map((feature, i) => (
                     <li key={i} className="flex items-center gap-2 text-sm text-gray-700">
@@ -146,11 +172,9 @@ export const LandingPage: React.FC = () => {
                     </li>
                   ))}
                 </ul>
-                <Link to="/checkout" className="block">
-                  <Button variant="gold" size="lg" className="w-full">
-                    Assinar Agora
-                  </Button>
-                </Link>
+                <Button variant="gold" size="lg" className="w-full" onClick={() => navigate('/register')}>
+                  Assinar Agora
+                </Button>
                 <p className="text-xs text-gray-400 mt-3">Cancele quando quiser • Sem multa</p>
               </div>
             </Card>
@@ -159,12 +183,12 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section id="faq" className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl sm:text-4xl font-bold text-primary text-center mb-12">Perguntas Frequentes</h2>
           <div className="space-y-3">
             {faqItems.map((item, idx) => (
-              <div key={idx} className="border border-gray-200 rounded-xl overflow-hidden">
+              <div key={idx} className="border border-gray-200 rounded-xl overflow-hidden bg-white">
                 <button
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
                   className="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors"

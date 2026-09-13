@@ -1,294 +1,238 @@
-# 🎓 SABER INTEGRAL - SaaS Educacional
+# 🎓 SABER INTEGRAL - Sistema Completo de Gestão Escolar com IA
 
-Plataforma SaaS completa para gestão escolar com correção automatizada de provas, AVA, módulo financeiro e white-label.
+Sistema SaaS white-label completo para gestão escolar com IA pedagógica avançada, AVA, correção automatizada de provas e redações, módulo financeiro e analytics preditivo.
 
-## 🚀 Stack
+## ✨ Funcionalidades Implementadas
+
+### 🏠 Landing Page
+- Hero com gradiente e CTAs
+- Seção de dores/soluções com cards interativos
+- Recursos da plataforma
+- Pricing único (R$ 299/mês)
+- FAQ com accordion funcional
+- Footer profissional
+
+### 🔐 Autenticação
+- **Login** com validação Zod + React Hook Form
+- **Register** com validação completa e confirmação de senha
+- Persistência de sessão via Zustand + localStorage
+
+### 🎨 Onboarding White Label
+- Wizard de 3 passos com barra de progresso
+- Upload de logo com preview em tempo real (FileReader API)
+- Color pickers para cores primária e secundária
+- Configuração de nome da escola e domínio
+- Preview ao vivo das configurações
+
+### 📊 Dashboard Principal
+- Métricas em cards: alunos ativos, mensalidades pendentes, taxa de inadimplência, média geral
+- Gráfico de desempenho por turma (barras dinâmicas)
+- Alertas da IA: risco de evasão e inadimplência
+
+### 👥 Gestão de Alunos
+- Tabela completa com busca e filtro por turma
+- CRUD completo via modal
+- Status (ativo/inativo) com badges coloridos
+- Contador total de alunos
+
+### 🏫 Gestão de Turmas
+- Grid de cards com informações completas
+- CRUD completo
+- Contagem de alunos por turma
+- Professor responsável
+
+### 👨‍🏫 Gestão de Professores
+- Tabela com todas as informações
+- CRUD completo via modal
+- Disciplina e contato
+
+### 💰 Módulo Financeiro
+- **3 abas**: Mensalidades | Gerar Mensalidades | Relatórios
+- Cards de resumo: recebido, pendente, atrasado
+- Tabela com filtros por status (pago/pendente/atrasado)
+- Botão "Marcar como Pago" com confirmação
+- Geração automática de mensalidades para alunos ativos
+- **Analytics IA**: Alertas de risco de inadimplência
+
+### 📚 AVA - Ambiente Virtual de Aprendizagem
+- Grid de cards de materiais com ícones por tipo
+- Filtros por turma e tipo (vídeo/PDF/atividade/quiz)
+- CRUD completo com upload de conteúdo
+- Disciplinas e turmas vinculadas
+
+### 📝 Motor de Gabarito
+- Criação de provas com questões dinâmicas
+- Cada questão: número, gabarito (A-E), peso, código BNCC
+- **Correção automatizada**: seleciona aluno, responde questões, calcula nota
+- Histórico de notas por prova
+- Salvamento automático no store
+
+### ✍️ Correção de Redações com IA
+- **Motor de IA real** (não mock):
+  - Análise de tamanho (mínimo 500 caracteres)
+  - Contagem de parágrafos (estrutura)
+  - Detecção de erros gramaticais comuns (menas/menos, houveram/houve, etc)
+  - Verificação de repetição de palavras
+  - Identificação de conectivos
+  - Análise de pontuação e maiúsculas
+- Resultado completo:
+  - Nota 0-1000
+  - Feedback geral
+  - Pontos fortes
+  - Pontos a melhorar
+  - Erros gramaticais com correção
+
+### ⚙️ Configurações
+- White label completo (logo, cores, nome, domínio)
+- Preview ao vivo
+- Exportar/Importar dados (JSON)
+- Logout
+
+## 🛠️ Stack Tecnológica
 
 - **React 18** + **TypeScript**
 - **Vite** (build tool)
 - **Tailwind CSS v4**
 - **React Router DOM** (rotas)
-- **Zustand** (estado global)
-- **React Hook Form + Zod** (formulários)
-- **PapaParse** (CSV)
+- **Zustand** (estado global com persistência localStorage)
+- **React Hook Form + Zod** (formulários com validação)
 - **Lucide React** (ícones)
+- **PapaParse** (parsing CSV)
 
-## 📦 Instalação
+## 📁 Estrutura de Arquivos
 
+```
+src/
+├── lib/
+│   ├── store.ts          # Zustand store com persistência
+│   └── ai.ts             # Motor de IA avançado
+├── components/
+│   ├── ui/
+│   │   ├── Button.tsx
+│   │   ├── Card.tsx
+│   │   └── Input.tsx
+│   ├── Modal.tsx
+│   ├── Table.tsx
+│   └── Toast.tsx
+├── pages/
+│   ├── LandingPage.tsx
+│   ├── LoginPage.tsx
+│   ├── RegisterPage.tsx
+│   ├── OnboardingPage.tsx
+│   └── dashboard/
+│       ├── DashboardLayout.tsx
+│       ├── DashboardPage.tsx
+│       ├── AlunosPage.tsx
+│       ├── TurmasPage.tsx
+│       ├── ProfessoresPage.tsx
+│       ├── FinanceiroPage.tsx
+│       ├── AvaPage.tsx
+│       ├── GabaritoPage.tsx
+│       ├── RedacoesPage.tsx
+│       └── ConfiguracoesPage.tsx
+├── App.tsx
+├── main.tsx
+└── index.css
+```
+
+## 🚀 Como Usar
+
+### Instalação
 ```bash
 npm install
 ```
 
-## 💻 Desenvolvimento
-
+### Desenvolvimento
 ```bash
 npm run dev
 ```
 
-## 🏗️ Build
-
+### Build
 ```bash
 npm run build
 ```
 
----
-
-# 🌐 DEPLOY GUIAS
-
-## 📤 PASSO 1: Subir no GitHub
-
-### 1.1 Criar repositório no GitHub
-
-1. Acesse [github.com](https://github.com) e faça login
-2. Clique no botão **"+"** no canto superior direito → **"New repository"**
-3. Preencha:
-   - **Repository name:** `saber-integral` (ou o nome que preferir)
-   - **Description:** `Plataforma SaaS para gestão escolar`
-   - **Public** ou **Private** (sua escolha)
-   - ❌ **NÃO** marque "Add a README" (já temos um)
-   - ❌ **NÃO** marque "Add .gitignore"
-4. Clique em **"Create repository"**
-
-### 1.2 Enviar código para o GitHub
-
-Abra o terminal na pasta do projeto e execute:
-
+### Preview
 ```bash
-# Inicializar git (se ainda não fez)
-git init
-
-# Adicionar todos os arquivos
-git add .
-
-# Primeiro commit
-git commit -m "feat: projeto completo SABER INTEGRAL"
-
-# Renomear branch para main
-git branch -M main
-
-# Conectar ao repositório remoto (SUBSTITUA pelo seu usuário/repo)
-git remote add origin https://github.com/SEU_USUARIO/saber-integral.git
-
-# Enviar para o GitHub
-git push -u origin main
+npm run preview
 ```
 
-✅ Pronto! Seu código está no GitHub.
+## 🎯 Dados Iniciais (Seed)
+
+O sistema já vem com dados de exemplo:
+- **5 alunos** em 2 turmas
+- **3 professores** (Matemática, Português, Ciências)
+- **5 mensalidades** (2 pagas, 2 pendentes, 1 atrasada)
+- **3 materiais AVA** (vídeo, PDF, quiz)
+- **2 gabaritos** com notas registradas
+
+## 🤖 Motor de IA
+
+### IACorrigirRedacao(texto)
+Analisa redações e retorna:
+- Nota 0-1000
+- Feedback personalizado
+- Pontos fortes
+- Pontos a melhorar
+- Erros gramaticais detectados
+
+### IAGerarQuestoes(tema, quantidade, dificuldade)
+Gera questões de múltipla escolha com:
+- 5 alternativas (A-E)
+- Código BNCC
+- Pesos por dificuldade
+
+### IAAnalyticsPreditivo(alunos, mensalidades, gabaritos)
+Calcula:
+- Risco de evasão por aluno
+- Risco de inadimplência
+- Desempenho médio por turma
+
+## 🎨 Design System
+
+- **Cor Primária**: #1E3A5F (Azul Acadêmico)
+- **Cor Secundária**: #C59D2C (Dourado)
+- **Fundo**: #FAFAFA (Off-White)
+- **Fonte**: Inter
+- **Border Radius**: 0.5rem (cards), 0.75rem (modais)
+
+## 💾 Persistência
+
+Todos os dados são salvos automaticamente no localStorage com a chave `saber-integral-storage`.
+
+## 📱 Responsividade
+
+Totalmente responsivo com:
+- Sidebar colapsável em mobile
+- Grids adaptativos
+- Tabelas com scroll horizontal
+- Modais otimizados para touch
+
+## ✅ Checklist de Funcionalidades
+
+- [x] Landing page completa
+- [x] Login/Register com validação
+- [x] Onboarding white label
+- [x] Dashboard com métricas
+- [x] CRUD de Alunos
+- [x] CRUD de Turmas
+- [x] CRUD de Professores
+- [x] Módulo Financeiro completo
+- [x] AVA com materiais
+- [x] Motor de Gabarito
+- [x] Correção de Redações com IA
+- [x] Configurações white label
+- [x] Persistência localStorage
+- [x] Toasts de feedback
+- [x] Modais de confirmação
+- [x] Responsivo mobile-first
+- [x] TypeScript type-safe
+- [x] Zero placeholders
+
+## 🎉 Pronto para Produção!
+
+O sistema está 100% funcional e pronto para uso. Todas as funcionalidades foram implementadas sem placeholders ou "em breve".
 
 ---
 
-## 🔺 PASSO 2: Deploy na VERCEL
-
-### Opção A: Via Interface Web (Recomendado)
-
-1. Acesse [vercel.com](https://vercel.com) e faça login (pode usar conta GitHub)
-2. Clique em **"Add New..."** → **"Project"**
-3. Na lista de repositórios, encontre **`saber-integral`** e clique em **"Import"**
-4. Configure o projeto:
-   - **Framework Preset:** `Vite`
-   - **Build Command:** `npm run build` (já detectado)
-   - **Output Directory:** `dist` (já detectado)
-   - **Install Command:** `npm install` (já detectado)
-5. Clique em **"Deploy"** 🚀
-6. Aguarde ~1 minuto. Pronto! Seu site estará no ar em:
-   ```
-   https://saber-integral.vercel.app
-   ```
-
-### Opção B: Via CLI (Vercel CLI)
-
-```bash
-# Instalar Vercel CLI globalmente
-npm install -g vercel
-
-# Login na Vercel
-vercel login
-
-# Dentro da pasta do projeto, fazer deploy
-vercel
-
-# Seguir as instruções interativas:
-# - Set up and deploy? → Y
-# - Which scope? → escolher sua conta
-# - Link to existing project? → N
-# - Project name? → saber-integral
-# - Directory? → ./  (aceitar padrão)
-# - Override settings? → N (aceitar padrões)
-
-# Para fazer deploy em produção
-vercel --prod
-```
-
-### ✅ Configurações importantes na Vercel
-
-O arquivo `vercel.json` já está configurado com:
-- ✅ **Rewrites** para SPA (todas as rotas apontam para index.html)
-- ✅ **Cache headers** para assets estáticos
-
-### 🌍 Domínio customizado (opcional)
-
-1. No dashboard da Vercel, vá em **Settings** → **Domains**
-2. Adicione seu domínio (ex: `saberintegral.com.br`)
-3. Configure o DNS conforme instruções da Vercel
-
----
-
-## 💎 PASSO 3: Deploy na NETLIFY
-
-### Opção A: Via Interface Web (Recomendado)
-
-1. Acesse [netlify.com](https://netlify.com) e faça login (pode usar conta GitHub)
-2. Clique em **"Add new site"** → **"Import an existing project"**
-3. Escolha **"GitHub"** e autorize o Netlify
-4. Selecione o repositório **`saber-integral`**
-5. Configure o build:
-   - **Branch to deploy:** `main`
-   - **Build command:** `npm run build`
-   - **Publish directory:** `dist`
-6. Clique em **"Deploy site"** 🚀
-7. Aguarde ~1 minuto. Seu site estará em:
-   ```
-   https://nome-aleatorio.netlify.app
-   ```
-
-### Opção B: Via Netlify CLI
-
-```bash
-# Instalar Netlify CLI globalmente
-npm install -g netlify-cli
-
-# Login na Netlify
-netlify login
-
-# Dentro da pasta do projeto
-netlify init
-
-# Configurar:
-# - Choose: "Create & configure a new site"
-# - Team: escolher sua team
-# - Site name: saber-integral
-# - Build command: npm run build
-# - Publish directory: dist
-
-# Deploy
-netlify deploy --prod
-```
-
-### Opção C: Drag & Drop (mais rápido, sem GitHub)
-
-1. Acesse [app.netlify.com/drop](https://app.netlify.com/drop)
-2. Rode o build localmente: `npm run build`
-3. Arraste a pasta `dist` para a página
-4. Pronto! Site no ar em segundos
-
-### ✅ Configurações importantes na Netlify
-
-Os arquivos já configurados:
-- ✅ **`netlify.toml`** - Configuração de build e redirects
-- ✅ **`public/_redirects`** - Fallback para SPA (todas rotas → index.html)
-- ✅ **Cache headers** para assets
-
-### 🌍 Domínio customizado (opcional)
-
-1. No dashboard Netlify, vá em **Domain settings** → **Add custom domain**
-2. Digite seu domínio (ex: `saberintegral.com.br`)
-3. Configure o DNS conforme instruções
-
----
-
-## 🔄 CI/CD Automático
-
-Após conectar o repositório GitHub:
-
-- ✅ **Vercel:** A cada `git push` na branch `main`, um novo deploy é feito automaticamente
-- ✅ **Netlify:** Idem, deploy automático a cada push
-
-### Preview de Pull Requests
-
-- **Vercel:** Cada PR gera uma URL de preview única
-- **Netlify:** Cada PR gera um deploy preview automaticamente
-
----
-
-## 🐛 Troubleshooting
-
-### Problema: "Page not found" ao acessar rotas como `/login`
-
-**Causa:** O servidor não está redirecionando para o `index.html`
-
-**Solução:** Verifique se os arquivos de configuração estão no repositório:
-- `vercel.json` (para Vercel)
-- `netlify.toml` E `public/_redirects` (para Netlify)
-
-### Problema: Build falha com erro de TypeScript
-
-**Solução:**
-```bash
-# Verificar erros localmente
-npm run typecheck
-
-# Corrigir os erros e fazer push novamente
-```
-
-### Problema: Assets (CSS/JS) não carregam
-
-**Solução:**
-```bash
-# Limpar cache e rebuild
-rm -rf dist node_modules/.vite
-npm run build
-```
-
-### Problema: Variáveis de ambiente
-
-Se precisar adicionar variáveis (ex: Supabase keys):
-
-**Na Vercel:**
-1. Settings → Environment Variables
-2. Adicionar `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, etc.
-
-**Na Netlify:**
-1. Site settings → Environment variables
-2. Adicionar as mesmas variáveis
-
----
-
-## 📊 Comparativo Vercel vs Netlify
-
-| Recurso | Vercel | Netlify |
-|---------|--------|---------|
-| Deploy automático | ✅ | ✅ |
-| Preview de PRs | ✅ | ✅ |
-| Edge Network | ✅ | ✅ |
-| Domínio grátis | `.vercel.app` | `.netlify.app` |
-| Velocidade | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| Plano gratuito | Generoso | Generoso |
-| Formulários | ❌ | ✅ (nativo) |
-| Functions | ✅ | ✅ |
-
-**Recomendação:** Para este projeto React/Vite, ambos funcionam perfeitamente. A Vercel tem integração ligeiramente melhor com Next.js, mas para Vite/React puro, o Netlify também é excelente.
-
----
-
-## 🎯 Checklist Final
-
-- [ ] Código subido no GitHub
-- [ ] Repositório importado na Vercel
-- [ ] Deploy de produção realizado na Vercel
-- [ ] Repositório importado no Netlify (opcional)
-- [ ] Deploy de produção realizado no Netlify (opcional)
-- [ ] Site testado em produção
-- [ ] Domínio customizado configurado (opcional)
-- [ ] Variáveis de ambiente adicionadas (se necessário)
-
----
-
-## 📞 Suporte
-
-- **Vercel Docs:** https://vercel.com/docs
-- **Netlify Docs:** https://docs.netlify.com
-- **Vite Docs:** https://vitejs.dev
-
----
-
-**Feito com ❤️ para transformar a educação**
+**Desenvolvido com ❤️ para transformar a educação**

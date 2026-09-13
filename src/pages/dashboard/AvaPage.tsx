@@ -1,127 +1,91 @@
-import React, { useState, useRef } from 'react';
-import { Plus, BookOpen, FileText, Sparkles, Trash2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Plus, Trash2, Video, FileText, BookOpen, HelpCircle } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
-import { Modal } from '../../components/ui/Modal';
-import { useAvaStore, useToastStore } from '../../stores';
-import { v4 as uuidv4 } from 'uuid';
+import { Modal } from '../../components/Modal';
+import { useStore, useToastStore, type MaterialAVA } from '../../lib/store';
 
 export const AvaPage: React.FC = () => {
-  const { trails, addTrail, removeTrail } = useAvaStore();
+  const { materiaisAVA, turmas, addMaterialAVA, deleteMaterialAVA } = useStore();
   const { addToast } = useToastStore();
-  const [showNewTrail, setShowNewTrail] = useState(false);
-  const [showEssayCorrection, setShowEssayCorrection] = useState(false);
-  const [trailTitle, setTrailTitle] = useState('');
-  const [trailDescription, setTrailDescription] = useState('');
-  const [trailSubject, setTrailSubject] = useState('');
-  const [trailFiles, setTrailFiles] = useState<string[]>([]);
-  const [essayText, setEssayText] = useState('');
-  const [essayFeedback, setEssayFeedback] = useState<null | {
-    nota: number;
-    competencias: { nome: string; nota: number; feedback: string }[];
-    sugestoes: string[];
-  }>(null);
-  const [analyzing, setAnalyzing] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [filterTurma, setFilterTurma] = useState('');
+  const [filterTipo, setFilterTipo] = useState('');
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      const names = Array.from(files).map((f) => f.name);
-      setTrailFiles([...trailFiles, ...names]);
-      addToast(`${names.length} arquivo(s) adicionado(s)`, 'success');
-    }
+  const [form, setForm] = useState<Omit<MaterialAVA, 'id'>>({
+    titulo: '', descricao: '', tipo: 'video', turmaId: '', disciplina: '', url: '', conteudo: '',
+  });
+
+  const handleSave = () => {
+    if (!form.titulo || !form.turmaId) { addToast('Preencha os campos obrigatórios', 'error'); return; }
+    addMaterialAVA(form);
+    addToast('Material adicionado!', 'success');
+    setShowModal(false);
+    setForm({ titulo: '', descricao: '', tipo: 'video', turmaId: '', disciplina: '', url: '', conteudo: '' });
   };
 
-  const handleCreateTrail = () => {
-    if (!trailTitle || !trailSubject) {
-      addToast('Preencha título e disciplina', 'error');
-      return;
-    }
-    const trail = {
-      id: uuidv4(),
-      title: trailTitle,
-      description: trailDescription,
-      subject: trailSubject,
-      files: trailFiles,
-      createdAt: new Date().toISOString(),
-    };
-    addTrail(trail);
-    addToast('Trilha criada com sucesso!', 'success');
-    setShowNewTrail(false);
-    setTrailTitle('');
-    setTrailDescription('');
-    setTrailSubject('');
-    setTrailFiles([]);
+  const handleDelete = (id: string) => { deleteMaterialAVA(id); addToast('Material excluído', 'info'); setShowDeleteConfirm(null); };
+
+  const filtered = materiaisAVA.filter((m) => {
+    const matchTurma = !filterTurma || m.turmaId === filterTurma;
+    const matchTipo = !filterTipo || m.tipo === filterTipo;
+    return matchTurma && matchTipo;
+  });
+
+  const getTurmaNome = (id: string) => turmas.find((t) => t.id === id)?.nome || '-';
+
+  const tipoIcon = (tipo: string) => {
+    const icons = { video: Video, pdf: FileText, atividade: BookOpen, quiz: HelpCircle };
+    const Icon = icons[tipo as keyof typeof icons] || BookOpen;
+    return <Icon className="w-5 h-5" />;
   };
 
-  const handleAnalyzeEssay = async () => {
-    if (!essayText.trim()) {
-      addToast('Escreva a redação para analisar', 'error');
-      return;
-    }
-    setAnalyzing(true);
-    await new Promise((r) => setTimeout(r, 3000));
-    
-    const wordCount = essayText.split(/\s+/).length;
-    const baseScore = Math.min(1000, Math.max(200, wordCount * 3 + Math.random() * 200));
-    
-    setEssayFeedback({
-      nota: Math.round(baseScore),
-      competencias: [
-        { nome: 'Competência 1 - Norma Culta', nota: Math.round(100 + Math.random() * 100), feedback: wordCount > 100 ? 'Bom domínio da norma culta. Atenção à concordância verbal em períodos longos.' : 'Texto muito curto. Desenvolva melhor as ideias para demonstrar domínio da norma.' },
-        { nome: 'Competência 2 - Compreensão do Tema', nota: Math.round(100 + Math.random() * 100), feedback: 'O tema foi compreendido. Articule melhor os argumentos ao longo do texto.' },
-        { nome: 'Competência 3 - Argumentação', nota: Math.round(80 + Math.random() * 120), feedback: 'Argumentos presentes, mas podem ser aprofundados com dados e exemplos concretos.' },
-        { nome: 'Competência 4 - Coesão', nota: Math.round(100 + Math.random() * 100), feedback: 'Use mais conectivos para ligar as ideias. Evite repetições de termos.' },
-        { nome: 'Competência 5 - Proposta de Intervenção', nota: Math.round(60 + Math.random() * 140), feedback: 'Inclua uma proposta de intervenção com agente, ação, meio e finalidade.' },
-      ],
-      sugestoes: [
-        'Revise a pontuação e acentuação do texto',
-        'Utilize repertório sociocultural para fortalecer a argumentação',
-        'Estruture o texto em introdução, desenvolvimento e conclusão claras',
-        'Inclua dados estatísticos ou citações de autoridades no assunto',
-      ],
-    });
-    setAnalyzing(false);
-    addToast('Análise concluída!', 'success');
+  const tipoColor = (tipo: string) => {
+    const colors = { video: 'bg-blue-50 text-blue-600', pdf: 'bg-red-50 text-red-600', atividade: 'bg-green-50 text-green-600', quiz: 'bg-purple-50 text-purple-600' };
+    return colors[tipo as keyof typeof colors] || 'bg-gray-50 text-gray-600';
   };
 
   return (
     <div className="animate-fade-in">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Ambiente Virtual de Aprendizagem</h1>
-          <p className="text-sm text-gray-500">Gerencie trilhas de aprendizagem e corrija redações</p>
+          <h1 className="text-2xl font-bold text-gray-800">AVA - Ambiente Virtual</h1>
+          <p className="text-sm text-gray-500">{materiaisAVA.length} material(is)</p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setShowEssayCorrection(true)}>
-            <Sparkles className="w-4 h-4 mr-2" /> Corrigir Redação
-          </Button>
-          <Button variant="gold" onClick={() => setShowNewTrail(true)}>
-            <Plus className="w-4 h-4 mr-2" /> Nova Trilha
-          </Button>
-        </div>
+        <Button variant="gold" onClick={() => setShowModal(true)}><Plus className="w-4 h-4 mr-2" /> Novo Material</Button>
       </div>
 
-      {/* Trails List */}
-      {trails.length > 0 ? (
+      <Card className="mb-4">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <select value={filterTurma} onChange={(e) => setFilterTurma(e.target.value)} className="px-4 py-2.5 rounded-lg border border-gray-300 text-sm">
+            <option value="">Todas as turmas</option>
+            {turmas.map((t) => <option key={t.id} value={t.id}>{t.nome}</option>)}
+          </select>
+          <select value={filterTipo} onChange={(e) => setFilterTipo(e.target.value)} className="px-4 py-2.5 rounded-lg border border-gray-300 text-sm">
+            <option value="">Todos os tipos</option>
+            <option value="video">Vídeo</option>
+            <option value="pdf">PDF</option>
+            <option value="atividade">Atividade</option>
+            <option value="quiz">Quiz</option>
+          </select>
+        </div>
+      </Card>
+
+      {filtered.length > 0 ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {trails.map((trail) => (
-            <Card key={trail.id} hover>
+          {filtered.map((mat) => (
+            <Card key={mat.id} hover>
               <div className="flex items-start justify-between mb-3">
-                <div className="p-2 bg-primary/5 rounded-lg">
-                  <BookOpen className="w-5 h-5 text-primary" />
-                </div>
-                <button onClick={() => { removeTrail(trail.id); addToast('Trilha removida', 'info'); }} className="p-1 text-gray-400 hover:text-red-500">
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                <div className={`p-2 rounded-lg ${tipoColor(mat.tipo)}`}>{tipoIcon(mat.tipo)}</div>
+                <button onClick={() => setShowDeleteConfirm(mat.id)} className="p-1.5 rounded hover:bg-red-50 text-red-600"><Trash2 className="w-4 h-4" /></button>
               </div>
-              <h3 className="font-bold text-gray-800 mb-1">{trail.title}</h3>
-              <p className="text-sm text-gray-500 mb-3 line-clamp-2">{trail.description || 'Sem descrição'}</p>
+              <h3 className="font-bold text-gray-800 mb-1">{mat.titulo}</h3>
+              <p className="text-sm text-gray-500 mb-3 line-clamp-2">{mat.descricao || 'Sem descrição'}</p>
               <div className="flex items-center justify-between">
-                <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full font-medium">{trail.subject}</span>
-                <span className="text-xs text-gray-400">{trail.files.length} arquivos</span>
+                <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full font-medium">{mat.disciplina || 'Geral'}</span>
+                <span className="text-xs text-gray-400">{getTurmaNome(mat.turmaId)}</span>
               </div>
             </Card>
           ))}
@@ -129,112 +93,54 @@ export const AvaPage: React.FC = () => {
       ) : (
         <Card className="text-center py-12">
           <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500 mb-4">Nenhuma trilha criada ainda</p>
-          <Button variant="gold" onClick={() => setShowNewTrail(true)}>
-            <Plus className="w-4 h-4 mr-2" /> Criar Primeira Trilha
-          </Button>
+          <p className="text-gray-500 mb-4">Nenhum material encontrado</p>
+          <Button variant="gold" onClick={() => setShowModal(true)}><Plus className="w-4 h-4 mr-2" /> Adicionar Material</Button>
         </Card>
       )}
 
-      {/* New Trail Modal */}
-      <Modal isOpen={showNewTrail} onClose={() => setShowNewTrail(false)} title="Nova Trilha de Aprendizagem" size="lg">
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Novo Material AVA" size="lg">
         <div className="space-y-4">
-          <Input label="Título da Trilha" placeholder="Ex: Trilha de Matemática - 9º ano" value={trailTitle} onChange={(e) => setTrailTitle(e.target.value)} />
-          <Input label="Disciplina" placeholder="Ex: Matemática" value={trailSubject} onChange={(e) => setTrailSubject(e.target.value)} />
+          <Input label="Título *" value={form.titulo} onChange={(e) => setForm({ ...form, titulo: e.target.value })} />
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">Descrição</label>
-            <textarea
-              value={trailDescription}
-              onChange={(e) => setTrailDescription(e.target.value)}
-              placeholder="Descreva os objetivos e conteúdo da trilha..."
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none h-24"
-            />
+            <textarea value={form.descricao} onChange={(e) => setForm({ ...form, descricao: e.target.value })} className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none h-20" />
           </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Materiais</label>
-            <div
-              onClick={() => fileInputRef.current?.click()}
-              className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors"
-            >
-              <FileText className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-              <p className="text-sm text-gray-500">Clique para adicionar arquivos</p>
-              <p className="text-xs text-gray-400">PDF, DOC, imagens, vídeos</p>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Tipo</label>
+              <select value={form.tipo} onChange={(e) => setForm({ ...form, tipo: e.target.value as any })} className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                <option value="video">Vídeo</option>
+                <option value="pdf">PDF</option>
+                <option value="atividade">Atividade</option>
+                <option value="quiz">Quiz</option>
+              </select>
             </div>
-            <input ref={fileInputRef} type="file" multiple onChange={handleFileUpload} className="hidden" />
-            {trailFiles.length > 0 && (
-              <div className="mt-3 space-y-1">
-                {trailFiles.map((f, i) => (
-                  <div key={i} className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded">
-                    <FileText className="w-4 h-4 text-gray-400" /> {f}
-                  </div>
-                ))}
-              </div>
-            )}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Turma *</label>
+              <select value={form.turmaId} onChange={(e) => setForm({ ...form, turmaId: e.target.value })} className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                <option value="">Selecione...</option>
+                {turmas.map((t) => <option key={t.id} value={t.id}>{t.nome}</option>)}
+              </select>
+            </div>
           </div>
-
-          <div className="flex gap-3 pt-4">
-            <Button variant="secondary" onClick={() => setShowNewTrail(false)}>Cancelar</Button>
-            <Button variant="gold" onClick={handleCreateTrail} className="flex-1">Criar Trilha</Button>
+          <Input label="Disciplina" value={form.disciplina} onChange={(e) => setForm({ ...form, disciplina: e.target.value })} />
+          <Input label="URL (para vídeos)" value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} placeholder="https://..." />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Conteúdo</label>
+            <textarea value={form.conteudo} onChange={(e) => setForm({ ...form, conteudo: e.target.value })} className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none h-24" placeholder="Conteúdo textual do material..." />
           </div>
+        </div>
+        <div className="flex gap-3 mt-6">
+          <Button variant="secondary" onClick={() => setShowModal(false)}>Cancelar</Button>
+          <Button variant="gold" onClick={handleSave} className="flex-1">Salvar</Button>
         </div>
       </Modal>
 
-      {/* Essay Correction Modal */}
-      <Modal isOpen={showEssayCorrection} onClose={() => { setShowEssayCorrection(false); setEssayFeedback(null); setEssayText(''); }} title="Correção de Redação com IA" size="lg">
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Cole a redação do aluno</label>
-            <textarea
-              value={essayText}
-              onChange={(e) => setEssayText(e.target.value)}
-              placeholder="Cole aqui o texto da redação para análise..."
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none h-40"
-            />
-            <p className="text-xs text-gray-400 mt-1">{essayText.split(/\s+/).filter(Boolean).length} palavras</p>
-          </div>
-
-          <Button variant="gold" onClick={handleAnalyzeEssay} loading={analyzing} className="w-full">
-            <Sparkles className="w-4 h-4 mr-2" />
-            {analyzing ? 'Analisando redação...' : 'Analisar Redação'}
-          </Button>
-
-          {essayFeedback && (
-            <div className="space-y-4 animate-fade-in">
-              <div className="bg-primary/5 rounded-xl p-4 text-center">
-                <p className="text-sm text-gray-500 mb-1">Nota Geral</p>
-                <p className="text-4xl font-extrabold text-primary">{essayFeedback.nota}<span className="text-lg font-normal text-gray-400">/1000</span></p>
-              </div>
-
-              <div>
-                <h4 className="font-semibold text-gray-800 mb-3">Competências</h4>
-                <div className="space-y-3">
-                  {essayFeedback.competencias.map((comp, i) => (
-                    <div key={i} className="bg-gray-50 rounded-lg p-3">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-medium text-gray-700">{comp.nome}</span>
-                        <span className={`text-sm font-bold ${comp.nota >= 160 ? 'text-green-600' : comp.nota >= 120 ? 'text-yellow-600' : 'text-red-600'}`}>
-                          {comp.nota}/200
-                        </span>
-                      </div>
-                      <p className="text-xs text-gray-500">{comp.feedback}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-semibold text-gray-800 mb-3">Sugestões de Melhoria</h4>
-                <ul className="space-y-2">
-                  {essayFeedback.sugestoes.map((s, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                      <span className="text-gold font-bold mt-0.5">→</span> {s}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          )}
+      <Modal isOpen={!!showDeleteConfirm} onClose={() => setShowDeleteConfirm(null)} title="Confirmar Exclusão" size="sm">
+        <p className="text-gray-600 mb-6">Tem certeza que deseja excluir este material?</p>
+        <div className="flex gap-3">
+          <Button variant="secondary" onClick={() => setShowDeleteConfirm(null)}>Cancelar</Button>
+          <Button variant="primary" onClick={() => showDeleteConfirm && handleDelete(showDeleteConfirm)} className="flex-1 bg-red-600 hover:bg-red-700">Excluir</Button>
         </div>
       </Modal>
     </div>
