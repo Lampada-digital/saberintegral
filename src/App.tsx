@@ -16,6 +16,10 @@ import { RedacoesPage } from './pages/dashboard/RedacoesPage';
 import { ConfiguracoesPage } from './pages/dashboard/ConfiguracoesPage';
 import { AuditoriaPage } from './pages/dashboard/AuditoriaPage';
 import { PortalAlunoPage } from './pages/PortalAlunoPage';
+import { AvaDashboardPage } from './pages/dashboard/ava/AvaDashboardPage';
+import { EstudioPage } from './pages/dashboard/ava/EstudioPage';
+import { AnalyticsPage } from './pages/dashboard/ava/AnalyticsPage';
+import { PortalAVAPage } from './pages/portal/PortalAVAPage';
 import { ToastContainer } from './components/Toast';
 import { useStore } from './lib/store';
 
@@ -46,7 +50,11 @@ function App() {
           <Route path="redacoes" element={<RedacoesPage />} />
           <Route path="configuracoes" element={<ConfiguracoesPage />} />
           <Route path="auditoria" element={<AuditoriaPage />} />
+          <Route path="ava" element={<AvaDashboardPage />} />
+          <Route path="ava/estudio" element={<EstudioPage />} />
+          <Route path="ava/analytics" element={<AnalyticsPage />} />
         </Route>
+        <Route path="/portal/ava" element={<ProtectedRoute><PortalAVAPage /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
