@@ -38,6 +38,9 @@ export type EventName =
   | 'atividade_entregue'
   | 'atividade_corrigida'
   | 'trilha_concluida'
+  | 'aluno_matriculado'
+  | 'aula_concluida'
+  | 'quiz_realizado'
   // Financeiro
   | 'mensalidade_gerada'
   | 'mensalidade_paga'
