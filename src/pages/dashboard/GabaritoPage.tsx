@@ -5,10 +5,12 @@ import { Card } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
 import { Modal } from '../../components/Modal';
 import { useStore, useToastStore, type Questao } from '../../lib/store';
+import { useEventBus } from '../../lib/eventBus';
 
 export const GabaritoPage: React.FC = () => {
   const { gabaritos, turmas, alunos, addGabarito, deleteGabarito, corrigirProva } = useStore();
   const { addToast } = useToastStore();
+  const { emit } = useEventBus();
   const [showNewExam, setShowNewExam] = useState(false);
   const [showCorrigir, setShowCorrigir] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
@@ -50,7 +52,7 @@ export const GabaritoPage: React.FC = () => {
     setRespostas(gabarito.questoes.map(() => ''));
   };
 
-  const handleCorrigir = () => {
+  const handleCorrigir = async () => {
     if (!showCorrigir || !corrigirAlunoId) {
       addToast('Selecione um aluno', 'error');
       return;
@@ -62,6 +64,23 @@ export const GabaritoPage: React.FC = () => {
     const resultado = corrigirProva(showCorrigir, corrigirAlunoId, respostas);
     addToast(`Nota: ${resultado.nota}/10 - Correção salva!`, 'success');
     setShowCorrigir(null);
+    
+    // Emitir evento de nota lançada (dispara notificações para pais, analytics, etc)
+    const gabarito = gabaritos.find((g) => g.id === showCorrigir);
+    const aluno = alunos.find((a) => a.id === corrigirAlunoId);
+    
+    await emit('nota_lancada', {
+      entityId: resultado.alunoId,
+      entityName: gabarito?.titulo || 'Prova',
+      data: {
+        alunoId: corrigirAlunoId,
+        alunoNome: aluno?.nome,
+        nota: resultado.nota,
+        gabaritoId: showCorrigir,
+        erros: resultado.erros,
+      },
+      priority: resultado.nota < 5 ? 'high' : 'normal',
+    });
   };
 
   const handleDelete = (id: string) => { deleteGabarito(id); addToast('Prova excluída', 'info'); setShowDeleteConfirm(null); };

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { GraduationCap, LayoutDashboard, Users, School, UserCheck, DollarSign, BookOpen, PenTool, FileText, Settings, Menu, X, LogOut, GraduationCap as StudentIcon } from 'lucide-react';
+import { GraduationCap, LayoutDashboard, Users, School, UserCheck, DollarSign, BookOpen, PenTool, FileText, Settings, Menu, X, LogOut, Activity } from 'lucide-react';
 import { useStore, useToastStore } from '../../lib/store';
+import { NotificationCenter } from '../../components/NotificationCenter';
 
 export const DashboardLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -19,6 +20,7 @@ export const DashboardLayout: React.FC = () => {
     { to: '/dashboard/gabarito', label: 'Gabarito', icon: PenTool },
     { to: '/dashboard/redacoes', label: 'Redações', icon: FileText },
     { to: '/dashboard/configuracoes', label: 'Configurações', icon: Settings },
+    { to: '/dashboard/auditoria', label: 'Auditoria', icon: Activity },
   ];
 
   const handleLogout = () => {
@@ -94,6 +96,7 @@ export const DashboardLayout: React.FC = () => {
             <span className="font-medium text-primary">{schoolConfig.nomeEscola}</span>
           </div>
           <div className="flex items-center gap-3">
+            <NotificationCenter />
             <button 
               onClick={() => navigate('/portal')} 
               className="text-sm font-medium text-primary hover:text-primary-light transition-colors hidden sm:block"
