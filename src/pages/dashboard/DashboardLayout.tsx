@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { GraduationCap, LayoutDashboard, Users, School, UserCheck, DollarSign, BookOpen, PenTool, FileText, Settings, Menu, X, LogOut } from 'lucide-react';
+import { GraduationCap, LayoutDashboard, Users, School, UserCheck, DollarSign, BookOpen, PenTool, FileText, Settings, Menu, X, LogOut, GraduationCap as StudentIcon } from 'lucide-react';
 import { useStore, useToastStore } from '../../lib/store';
 
 export const DashboardLayout: React.FC = () => {
@@ -94,6 +94,12 @@ export const DashboardLayout: React.FC = () => {
             <span className="font-medium text-primary">{schoolConfig.nomeEscola}</span>
           </div>
           <div className="flex items-center gap-3">
+            <button 
+              onClick={() => navigate('/portal')} 
+              className="text-sm font-medium text-primary hover:text-primary-light transition-colors hidden sm:block"
+            >
+              Portal do Aluno
+            </button>
             <span className="text-sm text-gray-500 hidden sm:block">Plano: <span className="font-semibold text-gold">SABER INTEGRAL</span></span>
           </div>
         </header>

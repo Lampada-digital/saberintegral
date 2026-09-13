@@ -14,6 +14,7 @@ import { AvaPage } from './pages/dashboard/AvaPage';
 import { GabaritoPage } from './pages/dashboard/GabaritoPage';
 import { RedacoesPage } from './pages/dashboard/RedacoesPage';
 import { ConfiguracoesPage } from './pages/dashboard/ConfiguracoesPage';
+import { PortalAlunoPage } from './pages/PortalAlunoPage';
 import { ToastContainer } from './components/Toast';
 import { useStore } from './lib/store';
 
@@ -32,6 +33,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/onboarding" element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />
+        <Route path="/portal" element={<ProtectedRoute><PortalAlunoPage /></ProtectedRoute>} />
         <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
           <Route index element={<DashboardPage />} />
           <Route path="alunos" element={<AlunosPage />} />
