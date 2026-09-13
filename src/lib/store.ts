@@ -11,7 +11,41 @@ export interface Aluno {
   responsavel: string;
   telefone: string;
   dataNascimento: string;
-  status: 'ativo' | 'inativo';
+  status: 'ativo' | 'inativo' | 'transferido';
+  // Dados completos
+  cpf?: string;
+  rg?: string;
+  sexo?: 'M' | 'F' | 'Outro';
+  corRaca?: string;
+  naturalidade?: string;
+  nacionalidade?: string;
+  celular?: string;
+  // Endereço
+  cep?: string;
+  logradouro?: string;
+  numero?: string;
+  complemento?: string;
+  bairro?: string;
+  cidade?: string;
+  estado?: string;
+  // Responsável completo
+  responsavelCpf?: string;
+  responsavelTelefone?: string;
+  responsavelEmail?: string;
+  responsavelParentesco?: string;
+  responsavelProfissao?: string;
+  // Acadêmico
+  dataMatricula?: string;
+  observacoes?: string;
+  // Saúde
+  tipoSanguineo?: string;
+  alergias?: string;
+  medicamentos?: string;
+  planoSaude?: string;
+  contatoEmergencia?: string;
+  // Documentos
+  foto?: string;
+  documentos?: string[];
 }
 
 export interface Turma {
