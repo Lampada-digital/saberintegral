@@ -5,11 +5,13 @@ import { Card } from '../../components/ui/Card';
 import { Modal } from '../../components/Modal';
 import { Table } from '../../components/Table';
 import { useStore, useToastStore } from '../../lib/store';
+import { useEventBus } from '../../lib/eventBus';
 import { IAAnaliseAvancada, IAPreverFluxoCaixa, IASugerirReajuste } from '../../lib/ai-avancada';
 
 export const FinanceiroPage: React.FC = () => {
   const { alunos, turmas, mensalidades, updateMensalidade, gerarMensalidades } = useStore();
   const { addToast } = useToastStore();
+  const { emit } = useEventBus();
   const [tab, setTab] = useState<'dashboard' | 'mensalidades' | 'gerar' | 'relatorios'>('dashboard');
   const [filterStatus, setFilterStatus] = useState<string>('');
   const [filterTurma, setFilterTurma] = useState<string>('');
@@ -37,13 +39,26 @@ export const FinanceiroPage: React.FC = () => {
     return matchStatus && matchTurma;
   });
 
-  const handleMarcarPago = (id: string) => {
+  const handleMarcarPago = async (id: string) => {
+    const mensalidade = mensalidades.find((m) => m.id === id);
     updateMensalidade(id, { status: 'pago' });
     addToast('Mensalidade marcada como paga!', 'success');
     setConfirmPayId(null);
+    
+    // Emitir evento de mensalidade paga (notifica pais com recibo)
+    await emit('mensalidade_paga', {
+      entityId: mensalidade?.alunoId || id,
+      entityName: mensalidade?.alunoNome,
+      data: {
+        mensalidadeId: id,
+        valor: mensalidade?.valor,
+        vencimento: mensalidade?.vencimento,
+      },
+      priority: 'normal',
+    });
   };
 
-  const handleGerar = () => {
+  const handleGerar = async () => {
     if (turmasSelecionadas.length === 0) {
       addToast('Selecione pelo menos uma turma', 'error');
       return;
@@ -52,6 +67,21 @@ export const FinanceiroPage: React.FC = () => {
     addToast(`${turmasSelecionadas.length} turma(s) - Mensalidades geradas com sucesso!`, 'success');
     setTab('mensalidades');
     setTurmasSelecionadas([]);
+    
+    // Emitir eventos para cada mensalidade gerada
+    const alunosTurmas = alunos.filter((a) => turmasSelecionadas.includes(a.turmaId) && a.status === 'ativo');
+    for (const aluno of alunosTurmas) {
+      await emit('mensalidade_gerada', {
+        entityId: aluno.id,
+        entityName: aluno.nome,
+        data: {
+          valor: 850,
+          vencimento: `${mesGerar}-10`,
+          turmaId: aluno.turmaId,
+        },
+        priority: 'normal',
+      });
+    }
   };
 
   const handleExportRelatorio = () => {

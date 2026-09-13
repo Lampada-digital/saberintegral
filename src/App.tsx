@@ -14,6 +14,7 @@ import { AvaPage } from './pages/dashboard/AvaPage';
 import { GabaritoPage } from './pages/dashboard/GabaritoPage';
 import { RedacoesPage } from './pages/dashboard/RedacoesPage';
 import { ConfiguracoesPage } from './pages/dashboard/ConfiguracoesPage';
+import { AuditoriaPage } from './pages/dashboard/AuditoriaPage';
 import { PortalAlunoPage } from './pages/PortalAlunoPage';
 import { ToastContainer } from './components/Toast';
 import { useStore } from './lib/store';
@@ -44,6 +45,7 @@ function App() {
           <Route path="gabarito" element={<GabaritoPage />} />
           <Route path="redacoes" element={<RedacoesPage />} />
           <Route path="configuracoes" element={<ConfiguracoesPage />} />
+          <Route path="auditoria" element={<AuditoriaPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

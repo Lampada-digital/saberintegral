@@ -5,12 +5,14 @@ import { Card } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
 import { Modal } from '../../components/Modal';
 import { useStore, useToastStore } from '../../lib/store';
+import { useEventBus } from '../../lib/eventBus';
 import { IACorrigirRedacao } from '../../lib/ai';
 import type { FeedbackIA } from '../../lib/store';
 
 export const RedacoesPage: React.FC = () => {
   const { redacoes, alunos, addRedacao, deleteRedacao } = useStore();
   const { addToast } = useToastStore();
+  const { emit } = useEventBus();
   const [showModal, setShowModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState<{ redacaoId: string; feedback: FeedbackIA } | null>(null);
@@ -31,12 +33,26 @@ export const RedacoesPage: React.FC = () => {
     addToast('Análise concluída!', 'success');
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!alunoId || !titulo || !feedback) { addToast('Preencha todos os campos', 'error'); return; }
     const aluno = alunos.find((a) => a.id === alunoId);
     addRedacao({ alunoId, alunoNome: aluno?.nome || '', titulo, texto, nota: feedback.nota, feedbackIA: feedback });
     addToast('Redação salva!', 'success');
     setShowModal(false);
+    
+    // Emitir evento de redação corrigida (notifica aluno e pais)
+    await emit('redacao_corrigida', {
+      entityId: `red_${Date.now()}`,
+      entityName: titulo,
+      data: {
+        alunoId,
+        alunoNome: aluno?.nome,
+        titulo,
+        nota: feedback.nota,
+      },
+      priority: 'normal',
+    });
+    
     resetForm();
   };
 

@@ -6,11 +6,13 @@ import { Input } from '../../components/ui/Input';
 import { Modal } from '../../components/Modal';
 import { Table } from '../../components/Table';
 import { useStore, useToastStore, type Aluno } from '../../lib/store';
+import { useEventBus } from '../../lib/eventBus';
 import Papa from 'papaparse';
 
 export const AlunosPage: React.FC = () => {
   const { alunos, turmas, addAluno, updateAluno, deleteAluno } = useStore();
   const { addToast } = useToastStore();
+  const { emit } = useEventBus();
   const [showModal, setShowModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [showProfile, setShowProfile] = useState<string | null>(null);
@@ -39,7 +41,7 @@ export const AlunosPage: React.FC = () => {
     setActiveTab(1);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.nome || !form.turmaId) {
       addToast('Preencha os campos obrigatórios (Nome e Turma)', 'error');
       return;
@@ -48,18 +50,44 @@ export const AlunosPage: React.FC = () => {
     if (editingId) {
       updateAluno(editingId, form);
       addToast('Aluno atualizado com sucesso!', 'success');
+      
+      // Emitir evento de aluno atualizado
+      await emit('aluno_atualizado', {
+        entityId: editingId,
+        entityName: form.nome,
+        data: { ...form },
+        priority: 'normal',
+      });
     } else {
+      const newAluno = { ...form, id: `aluno_${Date.now()}` } as Aluno;
       addAluno(form as Omit<Aluno, 'id'>);
       addToast('Aluno cadastrado com sucesso!', 'success');
+      
+      // Emitir evento de aluno criado (dispara cascata: mensalidade, notificações, etc)
+      await emit('aluno_criado', {
+        entityId: newAluno.id,
+        entityName: form.nome,
+        data: { ...form },
+        priority: 'high',
+      });
     }
     setShowModal(false);
     resetForm();
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
+    const aluno = alunos.find((a) => a.id === id);
     deleteAluno(id);
     addToast('Aluno excluído com sucesso', 'info');
     setShowDeleteConfirm(null);
+    
+    // Emitir evento de aluno excluído
+    await emit('aluno_excluido', {
+      entityId: id,
+      entityName: aluno?.nome,
+      data: { alunoId: id },
+      priority: 'high',
+    });
   };
 
   const handleExportCSV = () => {

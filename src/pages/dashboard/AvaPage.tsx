@@ -5,10 +5,12 @@ import { Card } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
 import { Modal } from '../../components/Modal';
 import { useStore, useToastStore, type MaterialAVA } from '../../lib/store';
+import { useEventBus } from '../../lib/eventBus';
 
 export const AvaPage: React.FC = () => {
   const { materiaisAVA, turmas, addMaterialAVA, deleteMaterialAVA } = useStore();
   const { addToast } = useToastStore();
+  const { emit } = useEventBus();
   const [showModal, setShowModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [filterTurma, setFilterTurma] = useState('');
@@ -18,11 +20,20 @@ export const AvaPage: React.FC = () => {
     titulo: '', descricao: '', tipo: 'video', turmaId: '', disciplina: '', url: '', conteudo: '',
   });
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.titulo || !form.turmaId) { addToast('Preencha os campos obrigatórios', 'error'); return; }
     addMaterialAVA(form);
     addToast('Material adicionado!', 'success');
     setShowModal(false);
+    
+    // Emitir evento de material publicado (notifica alunos da turma)
+    await emit('material_publicado', {
+      entityId: `mat_${Date.now()}`,
+      entityName: form.titulo,
+      data: { ...form },
+      priority: 'normal',
+    });
+    
     setForm({ titulo: '', descricao: '', tipo: 'video', turmaId: '', disciplina: '', url: '', conteudo: '' });
   };
 
